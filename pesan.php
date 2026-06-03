@@ -262,8 +262,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             totalHargaUI.innerText = 'Rp ' + total.toLocaleString('id-ID');
             });
             function gantiJam(jam) {
-            window.location.href = `pesan.php?id_film=<?= $id_film ?>&waktu=${jam}&kursi=${encodeURIComponent(inputKursi.value)}`;
-        };
+            const inputKursi = document.getElementById('inputKursi');
+            const kursi = inputKursi ? inputKursi.value : '';
+            window.location.href = 'pesan.php?id_film=<?= $id_film ?>&waktu=' + jam + '&kursi=' + encodeURIComponent(kursi);
+           };
     });
     </script>
 </body>
