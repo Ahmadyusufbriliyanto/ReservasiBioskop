@@ -82,9 +82,8 @@ $semua_reservasi = $collection->find([], ['sort' => ['_id' => -1]])->toArray();
                                 <span class="text-warning">Kursi: <?= htmlspecialchars($row['Nomor_Kursi']) ?></span>
                             </td>
                             <td><?= $badge ?></td>
-                            <small><?= htmlspecialchars($status) ?></small>
                             <td>
-                                <?php if($status == 'Pending'): ?>
+                                <?php if($status == 'pending'): ?>
                                     <a href="reservasi.php?acc=<?= $row['_id'] ?>" class="btn-acc me-2" onclick="return confirm('ACC tiket ini?')"><i class="bi bi-check2"></i> ACC</a>
                                     <a href="reservasi.php?tolak=<?= $row['_id'] ?>" class="btn-tolak" onclick="return confirm('Tolak tiket ini?')"><i class="bi bi-x-lg"></i> Tolak</a>
                                 <?php else: ?>
