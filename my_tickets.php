@@ -91,11 +91,14 @@ if (!empty($tiket_saya)) {
                         <?php if(empty($tiket_saya)): ?>
                             <tr><td colspan="4" class="text-center text-muted py-4">Kamu belum memesan tiket apapun.</td></tr>
                         <?php else: ?>
-                            <?php foreach ($tiket_saya as $row): 
-                                $status = $row['Status'] ?? 'Pending'; 
-                                $qr_data = "TIKET RESMI BIOSKOP | ID: " . $row['_id'] . " | Nama: " . $row['Nama_Pemesan'] . " | Film: " . $row['Judul_Film'] . " | Kursi: " . $row['Nomor_Kursi'];
-                                $qr_url = "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=" . urlencode($qr_data);
-                            ?>
+                    <?php foreach ($tiket_saya as $row): 
+                        $status = $row['Status'] ?? 'Pending'; 
+                        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
+                        $domain = $_SERVER['HTTP_HOST'];
+                        $link_detail = $protocol . $domain . "/detail_tiket.php?id=" . (string)$row['_id'];
+
+                        $qr_url = "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=" . urlencode($link_detail);
+                    ?>
                             <tr>
                                 <td><strong><?= htmlspecialchars($row['Judul_Film']) ?></strong><br><small class="text-muted">Kursi: <?= htmlspecialchars($row['Nomor_Kursi']) ?></small></td>
                                 <td><?= htmlspecialchars($row['Tanggal_Tayang']) ?><br><small><?= htmlspecialchars($row['Waktu_Tayang']) ?> WIB</small></td>
