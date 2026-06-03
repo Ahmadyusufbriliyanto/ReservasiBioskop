@@ -182,11 +182,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <label class="label-gold mb-2">Pilih Jam Tayang</label>
                                 <div class="d-flex flex-wrap gap-2">
                                     <?php foreach ($pilihan_jam as $jam): ?>
-                                        <button type="button" 
+                                        <a href="javascript:void(0)"
                                             class="time-badge <?= $waktu_dipilih == $jam ? 'active' : '' ?>" 
                                             onclick="pindahJam('<?= $jam ?>')">
                                             <?= $jam ?> WIB
-                                        </button>
+                                        </a>
                                     <?php endforeach; ?>
                                 </div>
                         </div>
