@@ -182,9 +182,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <label class="label-gold mb-2">Pilih Jam Tayang</label>
                             <div class="d-flex flex-wrap gap-2">
                                 <?php foreach ($pilihan_jam as $jam): ?>
-                                    <a href="pesan.php?id_film=<?= $id_film ?>&waktu=<?= $jam ?>" class="time-badge <?= $waktu_dipilih == $jam ? 'active' : '' ?>">
-                                        <?= $jam ?> WIB
-                                    </a>
+                                    <div class="time-badge <?= $waktu_dipilih == $jam ? 'active' : '' ?>" 
+                                             onclick="gantiJam('<?= $jam ?>')">
+                                             <?= $jam ?> WIB
+                                    </div>
                                 <?php endforeach; ?>
                             </div>
                         </div>
@@ -227,33 +228,42 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         const totalHargaUI = document.getElementById('totalHargaUI');
         const hargaSatuan = <?= (int)($film['Harga'] ?? 0) ?>;
         
-        let selectedSeats = [];
+        let selectedSeats = inputKursi.value ? inputKursi.value.split(', ') : [];
 
-        seats.forEach(seat => {
-            seat.addEventListener('click', () => {
-                const seatNum = seat.dataset.seat;
-                
-                // Jika sudah dipilih, batalkan
-                if (selectedSeats.includes(seatNum)) {
-                    selectedSeats = selectedSeats.filter(s => s !== seatNum);
-                    seat.classList.remove('selected');
-                } 
-                // Jika belum dipilih, tambahkan (Maksimal 5)
-                else {
-                    if (selectedSeats.length >= 5) {
-                        alert('Maksimal pesan 5 kursi dalam 1 transaksi!');
-                        return;
-                    }
-                    selectedSeats.push(seatNum);
-                    seat.classList.add('selected');
-                }
-                
-                // Update input text & Total Harga
-                inputKursi.value = selectedSeats.join(', ');
-                const total = selectedSeats.length * hargaSatuan;
-                totalHargaUI.innerText = 'Rp ' + total.toLocaleString('id-ID');
-            });
+        selectedSeats.forEach(seatNum => {
+        const el = document.querySelector(`[data-seat="${seatNum}"]`);
+        if (el) el.classList.add('selected');
         });
+
+        totalHargaUI.innerText = 'Rp ' + (selectedSeats.length * hargaSatuan).toLocaleString('id-ID');
+        document.querySelectorAll('.seat.available').forEach(seat => {
+        seat.addEventListener('click', () => {
+            const seatNum = seat.dataset.seat;
+            
+            // Jika sudah dipilih, batalkan
+            if (selectedSeats.includes(seatNum)) {
+                selectedSeats = selectedSeats.filter(s => s !== seatNum);
+                seat.classList.remove('selected');
+            } 
+            // Jika belum dipilih, tambahkan (Maksimal 5)
+            else {
+                if (selectedSeats.length >= 5) {
+                    alert('Maksimal pesan 5 kursi dalam 1 transaksi!');
+                    return;
+                }
+                selectedSeats.push(seatNum);
+                seat.classList.add('selected');
+            }
+            
+            // Update input text & Total Harga
+            inputKursi.value = selectedSeats.join(', ');
+            const total = selectedSeats.length * hargaSatuan;
+            totalHargaUI.innerText = 'Rp ' + total.toLocaleString('id-ID');
+            });
+            function gantiJam(jam) {
+            window.location.href = `pesan.php?id_film=<?= $id_film ?>&waktu=${jam}&kursi=${encodeURIComponent(inputKursi.value)}`;
+        };
+    });
     </script>
 </body>
 </html>
