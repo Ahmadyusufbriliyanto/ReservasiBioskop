@@ -180,13 +180,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <form method="POST" id="formPesanan">
                         <div class="mb-4">
                             <label class="label-gold mb-2">Pilih Jam Tayang</label>
-                            <div class="d-flex flex-wrap gap-2">
-                                <?php foreach ($pilihan_jam as $jam): ?>
-                            <div class="time-badge <?= $waktu_dipilih == $jam ? 'active' : '' ?>" 
-                                 onclick="gantiJam('<?= $jam ?>')">
-                                 <?= $jam ?> WIB
-                            </div>
-                                <?php endforeach; ?>
+                                <div class="d-flex flex-wrap gap-2">
+                                  <?php foreach ($pilihan_jam as $jam): ?>
+                                    <a href="javascript:void(0)" 
+                                       class="time-badge <?= $waktu_dipilih == $jam ? 'active' : '' ?>" 
+                                       onclick="gantiJam('<?= $jam ?>')">
+                                        <?= $jam ?> WIB
+                                   </a>
+                              <?php endforeach; ?>
                             </div>
                         </div>
                         <input type="hidden" name="Waktu_Tayang" value="<?= $waktu_dipilih ?>">
