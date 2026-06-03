@@ -199,7 +199,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         
                         <div class="mb-4">
                             <label class="label-gold">Nomor Kursi (Maks 5)</label>
-                            <input type="text" name="Nomor_Kursi" id="inputKursi" class="form-control" placeholder="Pilih dari layar bioskop" required readonly style="background-color: #222 !important; cursor: not-allowed; text-align: center; font-size: 1.2rem; font-weight: bold; color: #d4af37 !important;">
+                            <input type="text" 
+                                   name="Nomor_Kursi" 
+                                   id="inputKursi" 
+                                   class="form-control" 
+                                   placeholder="Pilih dari layar bioskop" 
+                                   required 
+                                   readonly 
+                                   value="<?= htmlspecialchars(isset($_GET['kursi']) ? $_GET['kursi'] : '') ?>" 
+                                   style="background-color: #222 !important; cursor: not-allowed; text-align: center; font-size: 1.2rem; font-weight: bold; color: #d4af37 !important;">
                         </div>
 
                         <div class="mb-4">
@@ -223,50 +231,57 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </div>
     </div>
 
-    <script>
-        function pindahJam(jam) {
-        const kursi = document.getElementById('inputKursi').value;
-        const idFilm = "<?= $_GET['id_film'] ?>"; // Pastikan id_film diambil dari parameter
-        window.location.href = 'pesan.php?id_film=' + idFilm + '&waktu=' + jam + '&kursi=' + encodeURIComponent(kursi);
-    }
-        const seats = document.querySelectorAll('.seat.available');
+<script>
+    // 1. Pas halaman selesai loading, dia otomatis baca kursi dari input box
+    document.addEventListener("DOMContentLoaded", function() {
         const inputKursi = document.getElementById('inputKursi');
-        const totalHargaUI = document.getElementById('totalHargaUI');
-        const hargaSatuan = <?= (int)($film['Harga'] ?? 0) ?>;
         
-        let selectedSeats = inputKursi.value ? inputKursi.value.split(', ') : [];
+        // Cek kalau ada data kursi di input box
+        if (inputKursi.value !== "") {
+            const daftarKursi = inputKursi.value.split(', ');
+            
+            // Cari elemen kursi di layar dan kasih class 'selected' biar warnanya kuning
+            daftarKursi.forEach(seatNum => {
+                const seatEl = document.querySelector(`[data-seat="${seatNum}"]`);
+                if(seatEl) {
+                    seatEl.classList.add('selected');
+                }
+            });
+        }
+    });
 
-        selectedSeats.forEach(seatNum => {
-        const el = document.querySelector(`[data-seat="${seatNum}"]`);
-        if (el) el.classList.add('selected');
-        });
+    // 2. Logic Klik Kursi (Tetap sama)
+    const seats = document.querySelectorAll('.seat.available');
+    const inputKursi = document.getElementById('inputKursi');
+    const totalHargaUI = document.getElementById('totalHargaUI');
+    const hargaSatuan = <?= (int)($film['Harga'] ?? 0) ?>;
+    let selectedSeats = inputKursi.value ? inputKursi.value.split(', ') : [];
 
-        totalHargaUI.innerText = 'Rp ' + (selectedSeats.length * hargaSatuan).toLocaleString('id-ID');
-        document.querySelectorAll('.seat.available').forEach(seat => {
+    seats.forEach(seat => {
         seat.addEventListener('click', () => {
             const seatNum = seat.dataset.seat;
-            
-            // Jika sudah dipilih, batalkan
             if (selectedSeats.includes(seatNum)) {
                 selectedSeats = selectedSeats.filter(s => s !== seatNum);
                 seat.classList.remove('selected');
-            } 
-            // Jika belum dipilih, tambahkan (Maksimal 5)
-            else {
+            } else {
                 if (selectedSeats.length >= 5) {
-                    alert('Maksimal pesan 5 kursi dalam 1 transaksi!');
+                    alert('Maksimal 5 kursi!');
                     return;
                 }
                 selectedSeats.push(seatNum);
                 seat.classList.add('selected');
             }
-            
-            // Update input text & Total Harga
             inputKursi.value = selectedSeats.join(', ');
-            const total = selectedSeats.length * hargaSatuan;
-            totalHargaUI.innerText = 'Rp ' + total.toLocaleString('id-ID');
-            });
+            totalHargaUI.innerText = 'Rp ' + (selectedSeats.length * hargaSatuan).toLocaleString('id-ID');
+        });
     });
-    </script>
+
+    // 3. Fungsi Pindah Jam (Wajib ada)
+    function pindahJam(jam) {
+        const kursi = document.getElementById('inputKursi').value;
+        // Pindah sambil bawa kursi yang sudah dipilih tadi
+        window.location.href = 'pesan.php?id_film=<?= $id_film ?>&waktu=' + jam + '&kursi=' + encodeURIComponent(kursi);
+    }
+</script>
 </body>
 </html>
