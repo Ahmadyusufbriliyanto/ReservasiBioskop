@@ -181,14 +181,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <div class="mb-4">
                             <label class="label-gold mb-2">Pilih Jam Tayang</label>
                                 <div class="d-flex flex-wrap gap-2">
-                                  <?php foreach ($pilihan_jam as $jam): ?>
-                                    <a href="javascript:void(0)" 
-                                       class="time-badge <?= $waktu_dipilih == $jam ? 'active' : '' ?>" 
-                                       onclick="gantiJam('<?= $jam ?>')">
-                                        <?= $jam ?> WIB
-                                   </a>
-                              <?php endforeach; ?>
-                            </div>
+                                    <?php foreach ($pilihan_jam as $jam): ?>
+                                        <button type="button" 
+                                            class="time-badge <?= $waktu_dipilih == $jam ? 'active' : '' ?>" 
+                                            onclick="pindahJam('<?= $jam ?>')">
+                                            <?= $jam ?> WIB
+                                        </button>
+                                    <?php endforeach; ?>
+                                </div>
                         </div>
                         <input type="hidden" name="Waktu_Tayang" value="<?= $waktu_dipilih ?>">
                         
@@ -224,6 +224,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div>
 
     <script>
+        function pindahJam(jam) {
+        const kursi = document.getElementById('inputKursi').value;
+        const idFilm = "<?= $_GET['id_film'] ?>"; // Pastikan id_film diambil dari parameter
+        window.location.href = 'pesan.php?id_film=' + idFilm + '&waktu=' + jam + '&kursi=' + encodeURIComponent(kursi);
+    }
         const seats = document.querySelectorAll('.seat.available');
         const inputKursi = document.getElementById('inputKursi');
         const totalHargaUI = document.getElementById('totalHargaUI');
@@ -261,11 +266,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             const total = selectedSeats.length * hargaSatuan;
             totalHargaUI.innerText = 'Rp ' + total.toLocaleString('id-ID');
             });
-            function gantiJam(jam) {
-            const inputKursi = document.getElementById('inputKursi');
-            const kursi = inputKursi ? inputKursi.value : '';
-            window.location.href = 'pesan.php?id_film=<?= $id_film ?>&waktu=' + jam + '&kursi=' + encodeURIComponent(kursi);
-           };
     });
     </script>
 </body>
